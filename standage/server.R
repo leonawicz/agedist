@@ -96,4 +96,8 @@ shinyServer(function(input, output, session) {
       g <- g + facet_wrap(as.formula(paste0("~", input$fctby)), ncol=2, scales=input$fctscales)
     g
   }, height=function() ph())
+  
+  outputOptions(output, "plotmean", suspendWhenHidden=FALSE)
+  outputOptions(output, "plotci", suspendWhenHidden=FALSE)
+  outputOptions(output, "plotdist", suspendWhenHidden=FALSE)
 })
