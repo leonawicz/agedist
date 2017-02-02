@@ -19,11 +19,21 @@ plottheme <- theme(panel.grid.major = element_line(size = .5, color = "grey"),
                    plot.margin=unit(c(0.5, 1, 0.5, 0.5),"cm"),
                    strip.text=element_text(size=14))
 d2 <- readRDS("distributions.rds")
+stepEquals <- function(i) paste0("this._currentStep==", i-1, collapse=" || ")
 
 shinyServer(function(input, output, session) {
 
   steps <- reactive(data.frame(element=c(
-    "#tb", "a[data-value=\"Example distributions\"]", "#plotmean", "#reg", "#veg", "#x", "#fctscales", "#pos", "#span"),
+    "#tb", 
+    "a[data-value=\"Example distributions\"]", 
+    "#plotmean", 
+    "#reg + .selectize-control", 
+    "#veg + .selectize-control", 
+    "#x + .selectize-control", 
+    "#fctscales + .selectize-control", 
+    "#pos + .selectize-control", 
+    ".js-irs-1",
+    "#plotci"),
      intro=c(
        "Stand age summaries are available as means and interval estimates
        at multiple plot tabs offering several different views of the data.
@@ -34,25 +44,44 @@ shinyServer(function(input, output, session) {
        "Choose a vegetation class.",
        "Set the temporal resolution to annual or decadal.",
        "If comparing multiple areas, the y-axis scales can be fixed across plot panels or free.
-       Free axes can be helpful when comparing vastly different vegetation cover area",
+       Free axes can be helpful when comparing vastly different vegetation cover area.",
        "For mean stand age (bar plot only), age bins can be stacked or displayed as proportions.",
        "There is no smoothing applied when the slider is at zero. Some trends may be more
        visible with some degree of smoothing applied, especially when there are several 
-       overlapping data groups."
+       overlapping data groups.",
+       
+       "The second tab shows a 95% confidence band for stand age. This band accounts for spatial
+       variability in age and uncertainty in both age and total vegetation cover area across simulations.
+       Historical data is used for 1900 - 2007 and is based soley on CRU data, but simulation output for
+      2008 - 2100 is based on two GCMs. For the projected time period, climate model uncertainty
+       based on these two GCMs is also factored into stand age probability distributions and confidence bands."
      ),
-     position=c("bottom", "left", "bottom", rep("bottom", 6))
+     position=c("bottom", "left", "bottom", rep("right", 3), rep("left", 3),
+                "left")
   ))
   
-  # observeEvent(input$help, {
-  #   introjs(session, options=list(
-  #     steps=steps(), "showProgress"="true", "showStepNumbers"="false", "showBullets"="false"),
-  #     events=list(
-  #       "onchange" =
-  #         "if (this._currentStep==0) {
-  #         $('a[data-value=\"age\"]').trigger('click');
-  #         }"
-  #     ))
-  # })
+  observeEvent(input$help, {
+    introjs(session, options=list(
+      steps=steps(), "showBullets"="false", "showProgress"="true", "showStepNumbers"="false"),
+      events=list(
+        "onbeforechange" = paste0("if (", stepEquals(1), ") {
+          $('a[data-value=\"about\"]').removeClass('active');
+          $('a[data-value=\"age\"]').addClass('active');
+          $('a[data-value=\"age\"]').trigger('click');
+        }
+        if (", stepEquals(1:9), ") {
+          $('a[data-value=\"95% confidence\"]').removeClass('active');
+          $('a[data-value=\"Example distributions\"]').removeClass('active');
+          $('a[data-value=\"Mean\"]').trigger('click');
+        }
+        if (", stepEquals(10), ") {
+          $('a[data-value=\"Mean\"]').removeClass('active');
+          $('a[data-value=\"Example distributions\"]').removeClass('active');
+          $('a[data-value=\"95% confidence\"]').addClass('active');
+          $('a[data-value=\"95% confidence\"]').trigger('click');
+        }")
+      ))
+  })
   
   observeEvent(input$map, {
     showModal(modalDialog(
