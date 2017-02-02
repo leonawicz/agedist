@@ -7,6 +7,7 @@ library(ggplot2)
 mult <- 1000
 d <- readRDS("age.rds") %>% map(~mutate(.x, Mean=Mean/mult, LB=LB/mult, UB=UB/mult))
 xscale <- scale_x_continuous(breaks=seq(1900, 2100, by=10), expand=c(0, 0))
+yscale <- scale_y_continuous(expand=c(0,0))
 ylbs <- c(expression("Area"~(1000~km^2)~""), expression("Area"~(symbol("\045"))~""))
 plottheme <- theme(panel.grid.major = element_line(size = .5, color = "grey"),
                    plot.title=element_text(hjust=0.5),
@@ -21,6 +22,46 @@ d2 <- readRDS("distributions.rds")
 
 shinyServer(function(input, output, session) {
 
+  steps <- reactive(data.frame(element=c(
+    "#tb", "a[data-value=\"Example distributions\"]", "#plotmean", "#reg", "#veg", "#x", "#fctscales", "#pos", "#span"),
+     intro=c(
+       "Stand age summaries are available as means and interval estimates
+       at multiple plot tabs offering several different views of the data.
+       These are based on annual estimated continuous stand age probability distributions.",
+       "A few temporaly aggregated examples of these distributions are available on the last tab.",
+       "Mean cover area through time is shown here for each age bin.",
+       "Choose one or more areas.",
+       "Choose a vegetation class.",
+       "Set the temporal resolution to annual or decadal.",
+       "If comparing multiple areas, the y-axis scales can be fixed across plot panels or free.
+       Free axes can be helpful when comparing vastly different vegetation cover area",
+       "For mean stand age (bar plot only), age bins can be stacked or displayed as proportions.",
+       "There is no smoothing applied when the slider is at zero. Some trends may be more
+       visible with some degree of smoothing applied, especially when there are several 
+       overlapping data groups."
+     ),
+     position=c("bottom", "left", "bottom", rep("bottom", 6))
+  ))
+  
+  # observeEvent(input$help, {
+  #   introjs(session, options=list(
+  #     steps=steps(), "showProgress"="true", "showStepNumbers"="false", "showBullets"="false"),
+  #     events=list(
+  #       "onchange" =
+  #         "if (this._currentStep==0) {
+  #         $('a[data-value=\"age\"]').trigger('click');
+  #         }"
+  #     ))
+  # })
+  
+  observeEvent(input$map, {
+    showModal(modalDialog(
+      title="Terrestrial protected areas",
+      img(src="tpa_map.png", style="width: 100%;"),
+      size="l", easyClose=TRUE, footer=NULL
+    ))
+  })
+  
   span <-reactive({
     x <- input$span
     if(is.null(x) || x==0) NULL else x
@@ -63,7 +104,7 @@ shinyServer(function(input, output, session) {
     }
     if(length(input$reg) > 1)
       g <- g + facet_wrap(~Location, ncol=2, scales=input$fctscales)
-    g
+    g + yscale
   }, height=function() ph())
 
   output$plotci <- renderPlot({
@@ -78,7 +119,7 @@ shinyServer(function(input, output, session) {
     }
     if(length(input$reg) > 1)
       g <- g + facet_wrap(~Location, ncol=2, scales=input$fctscales)
-    g
+    g + yscale
   }, height=function() ph())
 
   adj <-reactive({
@@ -94,7 +135,7 @@ shinyServer(function(input, output, session) {
       geom_density(alpha=0.4, adjust=adj()) + plottheme + labs(x="Age", y="Density")
     if(length(input$reg) > 1)
       g <- g + facet_wrap(as.formula(paste0("~", input$fctby)), ncol=2, scales=input$fctscales)
-    g
+    g + scale_x_continuous(expand=c(0,0)) + yscale
   }, height=function() ph())
   
   outputOptions(output, "plotmean", suspendWhenHidden=FALSE)
