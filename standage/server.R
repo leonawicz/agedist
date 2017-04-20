@@ -64,7 +64,7 @@ shinyServer(function(input, output, session) {
     introjs(session, options=list(
       steps=steps(), "showBullets"="false", "showProgress"="true", "showStepNumbers"="false"),
       events=list(
-        "onbeforechange" = paste0("if (", stepEquals(1), ") {
+        "onbeforechange" = I(paste0("if (", stepEquals(1), ") {
           $('a[data-value=\"about\"]').removeClass('active');
           $('a[data-value=\"age\"]').addClass('active');
           $('a[data-value=\"age\"]').trigger('click');
@@ -79,7 +79,7 @@ shinyServer(function(input, output, session) {
           $('a[data-value=\"Example distributions\"]').removeClass('active');
           $('a[data-value=\"95% confidence\"]').addClass('active');
           $('a[data-value=\"95% confidence\"]').trigger('click');
-        }")
+        }"))
       ))
   })
   
