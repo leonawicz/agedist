@@ -32,6 +32,8 @@ text_dist2 <- "These estimated annual probability distributions can be integrate
 For each period here, 30 annual distributions are integrated to show stand age densities at a coarser time scale.
 These density plots are included to provide context regarding where mean stand age estimates and uncertainty in the other two plots are derived from."
 
+faq <- source("faq.R", local=TRUE)[[1]]
+
 dashboardPage(
   dashboardHeader(
     title="Terrestrial protected areas stand age summary",
