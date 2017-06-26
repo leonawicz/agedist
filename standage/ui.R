@@ -50,7 +50,7 @@ dashboardPage(
     sidebarMenu(
       id="tabs",
       menuItem("Stand age", icon=icon("sliders"), tabName="age"),
-      menuItem("About", icon=icon("sliders"), tabName="about")
+      menuItem("About", icon=icon("info-circle"), tabName="about")
     ),
     actionButton("help", "Take tour", style=action_btn_style, class="btn-flat action-button btn-block", icon=icon("question-circle")),
     actionButton("map", "View map", style=action_btn_style, class="btn-flat action-button btn-block", icon=icon("globe"))
