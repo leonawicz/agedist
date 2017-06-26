@@ -87,7 +87,27 @@ dashboardPage(
         )
       ),
       tabItem(tabName="about",
-              "Nothing here yet..."
+        h2("About this application"),
+        p("This app shows projected stand age for tree species in Alaska based on ALFRESCO model outputs.
+          In addition to averages, confidence bands and probability distributions of stand age 
+          across space and multiple model simulations are available.
+          This provides insight into future uncertainty caputred by the model.", style="text-align:justify"),
+        h2("Frequently asked questions"),
+        faq,
+        h2("Contact information"),
+        HTML('
+             <div style="clear: left;"><img src="https://www.gravatar.com/avatar/5ab20ebc3829054f8af7b1ea4a317269?s=128"
+             alt="" style="float: left; margin-right:5px" /></div>
+             <p>Matthew Leonawicz<br/>
+             Statistician | useR<br/>
+             <a href="http://leonawicz.github.io" target="_blank">Github.io</a> |
+             <a href="http://blog.snap.uaf.edu" target="_blank">Blog</a> |
+             <a href="https://twitter.com/leonawicz" target="_blank">Twitter</a> |
+             <a href="http://www.linkedin.com/in/leonawicz" target="_blank">Linkedin</a> <br/>
+             <a href="http://www.snap.uaf.edu/", target="_blank">Scenarios Network for Alaska and Arctic Planning</a>
+             </p>'
+        ),
+        p("For questions about this application, please email mfleonawicz@alaska.edu")
       )
     )
   ),
