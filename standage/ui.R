@@ -68,7 +68,6 @@ dashboardPage(
     )
   ),
   dashboardSidebar(
-    tags$head(includeScript("ga-standage.js"), includeScript("ga-allapps.js")),
     introjsUI(),
     sidebarMenu(
       id="tabs",
